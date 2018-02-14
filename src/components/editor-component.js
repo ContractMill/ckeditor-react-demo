@@ -33,18 +33,11 @@ export default class Editor extends React.Component {
           footer: 0
         }
       })
-      console.log(this.state.content.replace(/\n/g, ''))
     } catch (err) {
       console.error('->', err)
     }
     console.log('[RESULT]: ', result)
-    // const newContent = evt.editor.getData()
-    // try {
-    //   await request(result)
-    // } catch (err) {
-    //   console.error(err)
-    // }
-    window.open(result)
+    window.location.href = result
   }
 
   onChange (evt) {
