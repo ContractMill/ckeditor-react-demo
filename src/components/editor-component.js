@@ -9,14 +9,11 @@ const editorBlock = css`
   margin-left: auto;
   padding-left: 10px;
   padding-right: 10px;
-  max-width: 1680px;
+  width: 100%;
 `
 
-const editorSection = css`
-  margin-bottom: 1rem;
+const headerEditor = css`
   
-  border: 1px solid rgba(0,0,0,.15);
-  display: inline-block;
 `
 
 const buttonStyle = css`
@@ -93,7 +90,7 @@ export default class Editor extends React.Component {
           </Col>
           <Col md={8} sm={12}>
             <CKEditor
-              activeClass={editorSection}
+              activeClass={headerEditor}
               content={'Edit header here'}
               events={{
                 'change': this.onChangeHeader
@@ -101,10 +98,7 @@ export default class Editor extends React.Component {
               config={{
                 docType: '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">',
                 defaultLanguage: 'ru',
-                // extraPlugins: 'autogrow',
-                autoGrow_minHeight: 200,
-                autoGrow_maxHeight: 600,
-                autoGrow_bottomSpace: 50
+                height: 150
               }}
             />
           </Col>
@@ -115,10 +109,13 @@ export default class Editor extends React.Component {
           </Col>
           <Col md={8} sm={12}>
             <CKEditor
-              activeClass={editorSection}
+              // activeClass={editorSection}
               content={this.state.content}
               events={{
                 'change': this.onChange
+              }}
+              config={{
+                height: 350
               }}
             />
           </Col>
