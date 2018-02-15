@@ -3,7 +3,7 @@ import React from 'react'
 import request from 'request-promise-native'
 import { css } from 'emotion'
 import { Button, Grid, Row, Col } from 'react-bootstrap'
-import CKeditorInline from './ckeditor'
+import CKeditorInline from './ckeditorInline'
 
 const editorBlock = css`
   margin-right: auto;
@@ -14,15 +14,13 @@ const editorBlock = css`
 `
 
 const headerEditor = css`
-  
+  border: 1px solid #aaa; 
+  margin-top: 50px;
 `
 
 const buttonStyle = css`
   font-size: x-large;
-`
-
-const sectionTitle = css`
-  position: absolute;
+  margin-top: 50px;
 `
 
 export default class Editor extends React.Component {
@@ -86,13 +84,10 @@ export default class Editor extends React.Component {
     return (
       <Grid className={editorBlock}>
         <Row>
-          <Col md={2} sm={12}>
-            <h3>Header</h3>
-          </Col>
-          <Col md={8} sm={12}>
+          <Col mdOffset={2} md={8} sm={12}>
             <CKeditorInline
               activeClass={headerEditor}
-              content={'Edit header here'}
+              // content={'Edit header here'}
               events={{
                 'change': this.onChangeHeader
               }}
@@ -100,17 +95,19 @@ export default class Editor extends React.Component {
               config={{
                 docType: '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">',
                 defaultLanguage: 'ru',
-                height: 150,
-                skin: 'office2013'
+                height: 150
               }}
-            />
+            >
+              <p style={{'text-align': 'right'}} >
+                <span style={{'color': '#999999'}}>
+                  Edit header here
+                </span>
+              </p>
+            </CKeditorInline>
           </Col>
         </Row>
         <Row>
-          <Col md={2} sm={12}>
-            <h3>Main section</h3>
-          </Col>
-          <Col md={8} sm={12}>
+          <Col mdOffset={2} md={8} sm={12}>
             <CKEditor
               scriptUrl={'ckeditor/ckeditor.js'}
               // activeClass={editorSection}

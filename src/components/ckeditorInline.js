@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
-import Script from 'react-load-script'
 const loadScript = require('load-script')
 
 var defaultScriptUrl = 'ckeditor/ckeditor.js'
@@ -45,11 +44,11 @@ class CKEditor extends React.Component {
       return
     }
 
-    ReactDOM.findDOMNode(this).innerHTML = this.props.content
     this.editorInstance = window.CKEDITOR.inline(
       ReactDOM.findDOMNode(this),
       this.state.config
     )
+    // ReactDOM.findDOMNode(this).innerHTML = this.props.children
 
     // Register listener for custom events if any
     for (var event in this.props.events) {
@@ -60,14 +59,15 @@ class CKEditor extends React.Component {
   }
 
   render () {
-    return <div contenteditable='true' className={this.props.activeClass} />
+    return (<div contentEditable='true' className={this.props.activeClass} >
+      { this.props.children }
+    </div>)
   }
 }
 
 CKEditor.defaultProps = {
   content: '',
-  config: {
-  },
+  config: {},
   isScriptLoaded: false,
   scriptUrl: defaultScriptUrl,
   activeClass: '',
@@ -80,7 +80,8 @@ CKEditor.propTypes = {
   isScriptLoaded: PropTypes.bool,
   scriptUrl: PropTypes.string,
   activeClass: PropTypes.string,
-  events: PropTypes.object
+  events: PropTypes.object,
+  children: PropTypes.any
 }
 
 export default CKEditor
