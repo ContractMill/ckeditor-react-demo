@@ -3,6 +3,7 @@ import React from 'react'
 import request from 'request-promise-native'
 import { css } from 'emotion'
 import { Button, Grid, Row, Col } from 'react-bootstrap'
+import CKeditorInline from './ckeditor'
 
 const editorBlock = css`
   margin-right: auto;
@@ -89,16 +90,18 @@ export default class Editor extends React.Component {
             <h3>Header</h3>
           </Col>
           <Col md={8} sm={12}>
-            <CKEditor
+            <CKeditorInline
               activeClass={headerEditor}
               content={'Edit header here'}
               events={{
                 'change': this.onChangeHeader
               }}
+              scriptUrl={'ckeditor/ckeditor.js'}
               config={{
                 docType: '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">',
                 defaultLanguage: 'ru',
-                height: 150
+                height: 150,
+                skin: 'office2013'
               }}
             />
           </Col>
@@ -109,6 +112,7 @@ export default class Editor extends React.Component {
           </Col>
           <Col md={8} sm={12}>
             <CKEditor
+              scriptUrl={'ckeditor/ckeditor.js'}
               // activeClass={editorSection}
               content={this.state.content}
               events={{
