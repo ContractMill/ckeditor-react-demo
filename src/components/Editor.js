@@ -3,7 +3,7 @@ import React from 'react'
 import request from 'request-promise-native'
 import { css } from 'emotion'
 import { Button, Grid, Row, Col } from 'react-bootstrap'
-import CKeditorInline from './ckeditorInline'
+import CKeditorInline from './CKEditorInline'
 
 const editorBlock = css`
   margin-right: auto;
@@ -30,6 +30,9 @@ export default class Editor extends React.Component {
     this.onChange = this.onChange.bind(this)
     this.onChangeHeader = this.onChangeHeader.bind(this)
     this.onButtonClick = this.onButtonClick.bind(this)
+    this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this)
+    this.onCreateEditor = this.onCreateEditor.bind(this)
+    this.editor = undefined
     this.state = {
       content: 'Document content',
       header: ''
@@ -40,6 +43,15 @@ export default class Editor extends React.Component {
     this.setState({
       content: newContent
     })
+  }
+
+  componentWillReceiveProps (nextProps) {
+    this.setState({
+      file: nextProps.file,
+      content: nextProps.file.content
+    })
+    this.editor.setData(nextProps.file.content)
+    // this.forceUpdate()
   }
 
   async onButtonClick () {
@@ -64,6 +76,10 @@ export default class Editor extends React.Component {
   onChange (evt) {
     const newContent = evt.editor.getData()
     this.updateContent(newContent)
+  }
+
+  onCreateEditor (evt) {
+    this.editor = evt.editor
   }
 
   onChangeHeader (evt) {
@@ -98,7 +114,7 @@ export default class Editor extends React.Component {
                 height: 150
               }}
             >
-              <p style={{'text-align': 'right'}} >
+              <p style={{'textAlign': 'right'}} >
                 <span style={{'color': '#999999'}}>
                   Edit header here
                 </span>
@@ -113,10 +129,14 @@ export default class Editor extends React.Component {
               // activeClass={editorSection}
               content={this.state.content}
               events={{
-                'change': this.onChange
+                'change': this.onChange,
+                'configLoaded': this.onCreateEditor
               }}
               config={{
-                height: 350
+                height: 350,
+                autoGrow_minHeight: 350,
+                // autoGrow_maxHeight: 600,
+                autoGrow_bottomSpace: 50
               }}
             />
           </Col>

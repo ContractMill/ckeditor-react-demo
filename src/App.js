@@ -1,18 +1,28 @@
 import React, { Component } from 'react'
 import logo from './logo.svg'
 import './App.css'
-import Editor from './components/editor-component'
+import Editor from './components/Editor'
+import FileDrop from './components/FileDrop'
 
 class App extends Component {
+  constructor (props) {
+    super(props)
+    this.state = { file: null }
+    this.handleFile = this.handleFile.bind(this)
+  }
+
+  handleFile (file) {
+    this.setState({
+      file: file
+    })
+  }
+
   render () {
     return (
       <div className='App'>
-        {/* <header className='App-header'>
-          <h1 className='App-title'>CKEditor on React
-            <img src={logo} className='App-logo' alt='logo' />
-          </h1>
-        </header> */}
-        <Editor />
+        <FileDrop onFile={this.handleFile} >
+          <Editor file={this.state.file} />
+        </FileDrop>
       </div>
     )
   }

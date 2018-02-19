@@ -5,7 +5,7 @@ const loadScript = require('load-script')
 
 var defaultScriptUrl = 'ckeditor/ckeditor.js'
 
-class CKEditor extends React.Component {
+class CKEditorInline extends React.Component {
   constructor (props) {
     super(props)
 
@@ -65,7 +65,7 @@ class CKEditor extends React.Component {
   }
 }
 
-CKEditor.defaultProps = {
+CKEditorInline.defaultProps = {
   content: '',
   config: {},
   isScriptLoaded: false,
@@ -74,7 +74,7 @@ CKEditor.defaultProps = {
   events: {}
 }
 
-CKEditor.propTypes = {
+CKEditorInline.propTypes = {
   content: PropTypes.any,
   config: PropTypes.object,
   isScriptLoaded: PropTypes.bool,
@@ -84,4 +84,4 @@ CKEditor.propTypes = {
   children: PropTypes.any
 }
 
-export default CKEditor
+export default CKEditorInline
