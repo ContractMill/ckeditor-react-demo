@@ -5,6 +5,7 @@
   "dependencies": {
     "ckeditor-full": "^4.7.3",
     "emotion": "^9.0.1",
+    "ht-docx": "^1.1.1",
     "mammoth": "^1.4.4",
     "react": "^16.2.0",
     "react-bootstrap": "^0.32.1",
