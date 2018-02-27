@@ -31,7 +31,7 @@ function htmlOptimization (html) {
     html = html.replace(original, 'font-family:\'' + font + '\'')
   }
   let jq = $(`<div>${html}</div>`)
-  jq.find('div[style="page-break-after:always"]').replaceWith('[pageBreak]')
+  jq.find('div[style="page-break-after:always"]').replaceWith('<div>[pageBreak]</div>')
   $('<br>').appendTo(jq.find('span.lineHeightSpan'))
   let result = jq[0].outerHTML
   while (/<\/span><br><\/span>/.test(result)) {
