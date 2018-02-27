@@ -4,6 +4,7 @@ import request from 'request-promise-native'
 import { css } from 'emotion'
 import { Button, Grid, Row, Col } from 'react-bootstrap'
 import CKeditorInline from './CKEditorInline'
+import $ from 'jquery'
 
 const editorBlock = css`
   margin-right: auto;
@@ -23,6 +24,34 @@ const buttonStyle = css`
   margin-top: 50px;
 `
 
+function htmlOptimization (html) {
+  while (/font-family:[^']*?(?=[;"])/.test(html)) {
+    let original = html.match(/font-family:[^']*?(?=[;"])/)[0]
+    let font = original.replace('font-family:', '').match(/.*?(?=[;,"])/)[0]
+    html = html.replace(original, 'font-family:\'' + font + '\'')
+  }
+  let jq = $(`<div>${html}</div>`)
+  jq.find('div[style="page-break-after:always"]').replaceWith('[pageBreak]')
+  $('<br>').appendTo(jq.find('span.lineHeightSpan'))
+  let result = jq[0].outerHTML
+  while (/<\/span><br><\/span>/.test(result)) {
+    result = result.replace('</span><br></span>', '</span></span>')
+  }
+  return result
+}
+
+function sendDocumentAndGetLink (document) {
+  try {
+    return request.post({
+      url: 'https://script.google.com/macros/s/AKfycbyu0p0OFLepWOk4mULxu-AMHjAkx_HXOyqGR4JfYAUTgD9RPoA/exec',
+      followAllRedirects: true,
+      form: document
+    })
+  } catch (err) {
+    console.error('->', err)
+  }
+}
+
 export default class Editor extends React.Component {
   constructor (props) {
     super(props)
@@ -37,6 +66,7 @@ export default class Editor extends React.Component {
       content: 'Document content',
       header: ''
     }
+    window.$ = $
   }
 
   updateContent (newContent) {
@@ -55,21 +85,12 @@ export default class Editor extends React.Component {
   }
 
   async onButtonClick () {
-    let result
-    try {
-      result = await request.post({
-        url: 'https://script.google.com/macros/s/AKfycbyu0p0OFLepWOk4mULxu-AMHjAkx_HXOyqGR4JfYAUTgD9RPoA/exec',
-        followAllRedirects: true,
-        form: {
-          document: this.state.content,
-          header: this.state.header,
-          footer: 0
-        }
-      })
-    } catch (err) {
-      console.error('->', err)
-    }
-    console.log('[RESULT]: ', result)
+    let result = htmlOptimization(this.state.content)
+    console.log(result)
+    result = await sendDocumentAndGetLink({
+      document: result,
+      header: this.state.header
+    })
     window.location.href = result
   }
 
@@ -139,6 +160,7 @@ export default class Editor extends React.Component {
                 autoGrow_bottomSpace: 50,
                 extraPlugins: 'lineheight,enterkey',
                 enterMode: 2, // CKEDITOR.ENTER_BR,
+                shiftEnterMode: 1, // CKEDITOR.ENTER_P,
                 line_height: '1px;100%;300%;normal;10em;10;100px'
               }}
             />

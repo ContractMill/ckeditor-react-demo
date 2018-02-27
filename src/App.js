@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import logo from './logo.svg'
+// import logo from './logo.svg'
 import './App.css'
 import Editor from './components/Editor'
 import FileDrop from './components/FileDrop'
