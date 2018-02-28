@@ -158,7 +158,7 @@ export default class Editor extends React.Component {
                 autoGrow_minHeight: 350,
                 // autoGrow_maxHeight: 600,
                 autoGrow_bottomSpace: 50,
-                extraPlugins: 'lineheight,enterkey',
+                extraPlugins: 'lineheight,enterkey,tabletoolstoolbar,autocorrect,colordialog,tableresize',
                 enterMode: 2, // CKEDITOR.ENTER_BR,
                 shiftEnterMode: 1, // CKEDITOR.ENTER_P,
                 line_height: '1px;100%;300%;normal;10em;10;100px'
