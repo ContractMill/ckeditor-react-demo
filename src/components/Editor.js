@@ -35,7 +35,7 @@ function htmlOptimization (html) {
     html = html.replace(original, 'font-family:\'' + font + '\'')
   }
   let jq = $(`<div>${html}</div>`)
-  jq.find('div[style="page-break-after:always"]').replaceWith('[pageBreak]')
+  jq.find('div[style="page-break-after:always"]').replaceWith('<div>[pageBreak]</div>')
   $('<br>').appendTo(jq.find('span.lineHeightSpan'))
   let result = jq[0].outerHTML
   while (/<\/span><br><\/span>/.test(result)) {
@@ -163,7 +163,7 @@ export default class Editor extends React.Component {
                 autoGrow_minHeight: 350,
                 // autoGrow_maxHeight: 600,
                 autoGrow_bottomSpace: 50,
-                extraPlugins: 'lineheight,enterkey',
+                extraPlugins: 'lineheight,enterkey,tabletoolstoolbar,autocorrect,colordialog,tableresize',
                 enterMode: 2, // CKEDITOR.ENTER_BR,
                 shiftEnterMode: 1, // CKEDITOR.ENTER_P,
                 line_height: '1px;100%;300%;normal;10em;10;100px'
