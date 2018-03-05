@@ -5,6 +5,9 @@ import { css } from 'emotion'
 import { Button, Grid, Row, Col } from 'react-bootstrap'
 import CKeditorInline from './CKEditorInline'
 import $ from 'jquery'
+import debug from 'debug'
+
+process.env.DEBUG = '*'
 
 const editorBlock = css`
   margin-right: auto;
@@ -25,6 +28,7 @@ const buttonStyle = css`
 `
 
 function htmlOptimization (html) {
+  html = html.replace(/&quot;/g, '')
   while (/font-family:[^']*?(?=[;"])/.test(html)) {
     let original = html.match(/font-family:[^']*?(?=[;"])/)[0]
     let font = original.replace('font-family:', '').match(/.*?(?=[;,"])/)[0]
@@ -85,6 +89,7 @@ export default class Editor extends React.Component {
   }
 
   async onButtonClick () {
+    console.log(this.state.content)
     let result = htmlOptimization(this.state.content)
     console.log(result)
     result = await sendDocumentAndGetLink({
