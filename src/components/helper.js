@@ -7,6 +7,7 @@ const debug = require('debug')('helper')
 debug.enabled = true
 
 async function fixGoogleHTML (html) {
+  console.log('fixGoogleHTML', html)
   let result = await posthtml().use(posthtmlInlineCss()).process(html)
   let resultHtml = posthtmlRender(result.tree[0].content[1].content, result.tree.options)
   return resultHtml
@@ -46,16 +47,16 @@ function wrapLineheights ($, jq) {
 
 export default async function (html) {
   try {
-    fixGoogleHTML(html).then(html => {
-      html = html.replace(/font-family:.?"\n?\W*?([\w|\s]*?)\W*?"/g, (match, fontName) => `font-family:‖${fontName}‖`)
-      html = html.replace(/"/g, '\'').replace(/‖/g, '"')
-      html = wrapWithStrong(html)
-      html = pretty(html)
-      html = html.replace(/"/g, '\'').replace(/&quot;/g, '"')
-      html = html.replace(/font-weight:[\w ]*?;?/g, '')
-      html = html.replace(/<style(.|\n)*?<\/style>/, '')
-      return html
-    })
+    html = await fixGoogleHTML(html)
+    html = html.replace(/font-family:.?"\n?\W*?([\w|\s]*?)\W*?"/g, (match, fontName) => `font-family:‖${fontName}‖`)
+    html = html.replace(/"/g, '\'').replace(/‖/g, '"')
+    html = wrapWithStrong(html)
+    html = pretty(html)
+    html = html.replace(/"/g, '\'').replace(/&quot;/g, '"')
+    html = html.replace(/font-weight:[\w ]*?;?/g, '')
+    html = html.replace(/<style(.|\n)*?<\/style>/, '')
+    // console.log(html)
+    return html
   } catch (e) {
     console.error(e)
   }

@@ -205,6 +205,7 @@ class FileDrop extends Component {
           console.log(options)
           request.post(options).then(async html => {
             console.log('->', html)
+            console.log(htmlFixer)
             let fixedHtml = await htmlFixer(html)
             console.log('-->', fixedHtml)
             file.content = fixedHtml
