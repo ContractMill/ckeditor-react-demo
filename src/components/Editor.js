@@ -65,7 +65,7 @@ export default class Editor extends React.Component {
     this.editor = undefined
     this.state = {
       content:
-      `<h1><img alt="Saturn V carrying Apollo 11" class="right" src="https://sdk.ckeditor.com/samples/assets/sample.jpg" /> Apollo 11</h1>
+      `<h1><img alt="Saturn V carrying Apollo 11" class="right" src="https://sdk.ckeditor.com/samples/assets/sample.jpg" style="float: right;" /> Apollo 11</h1>
 
       <p><strong>Apollo 11</strong> was the spaceflight that landed the first humans, Americans <a href="http://en.wikipedia.org/wiki/Neil_Armstrong">Neil Armstrong</a> and <a href="http://en.wikipedia.org/wiki/Buzz_Aldrin">Buzz Aldrin</a>, on the Moon on July 20, 1969, at 20:18 UTC. Armstrong became the first to step onto the lunar surface 6 hours later on July 21 at 02:56 UTC.</p>
       
