@@ -1,8 +1,14 @@
+/* global FileReader */
+
 import React, { Component } from 'react'
 import { css, cx } from 'emotion'
 import PropTypes from 'prop-types'
+import request from 'request-promise-native'
+// import $ from 'jquery'
 
-const mammoth = require('mammoth/mammoth.browser.js')
+// const mammoth = require('mammoth/mammoth.browser.js')
+
+import htmlFixer from './helper'
 
 const styles = css`
   .container {
@@ -51,6 +57,32 @@ const styles = css`
     }
   }
 `
+
+async function docxToHtmlConver (arrayBuffer, file) {
+  let formData = {
+    docFile: arrayBufferToBase64(arrayBuffer),
+    options: {
+      mimeType: file.type,
+      name: file.name
+    }
+  }
+  let params = {
+    url: 'https://script.google.com/macros/s/AKfycbwoWFWecEVJ7wLGoWtAbcT_jex48Ovp7bxm0HFjwtsxlzKpckoZ/exec',
+    followAllRedirects: true,
+    form: formData
+  }
+  console.log(params)
+  let result = await request.post(params)
+  console.log('Result:', result)
+  return result
+}
+
+function arrayBufferToBase64 (buffer) {
+  let binary = ''
+  let bytes = new Uint8Array(buffer)
+  bytes.map(byte => { binary += String.fromCharCode(byte) })
+  return window.btoa(binary)
+}
 
 class FileDrop extends Component {
   constructor (props) {
@@ -155,16 +187,40 @@ class FileDrop extends Component {
     var reader = new FileReader()
 
     reader.onload = (e) => {
+      console.log(e)
       const arrayBuffer = e.target.result
+      console.log(arrayBuffer)
       // file.content = reader.result
       // console.log('--->', arrayBuffer)
       // this.props.onFile && this.props.onFile(file)
-      mammoth.convertToHtml({ arrayBuffer })
-        .then(result => {
-          console.log('=====>>>', result)
-          file.content = result.value
-          this.props.onFile && this.props.onFile(file)
+
+      try {
+        docxToHtmlConver(arrayBuffer, file).then(link => {
+          const options = {
+            url: 'https://zmeu213.unit.run/1-19?key=jA2zefFhS0q30Lc3YyhCaP46o0vACB3W',
+            form: {
+              link: link
+            }
+          }
+          console.log(options)
+          request.post(options).then(async html => {
+            console.log('->', html)
+            let fixedHtml = await htmlFixer(html)
+            console.log('-->', fixedHtml)
+            file.content = fixedHtml
+            this.props.onFile && this.props.onFile(file)
+          })
         })
+      } catch (err) {
+        console.error(err)
+      }
+
+      // mammoth.convertToHtml({ arrayBuffer })
+      //   .then(result => {
+      //     console.log('=====>>>', result)
+      //     file.content = result.value
+      //     this.props.onFile && this.props.onFile(file)
+      //   })
     }
 
     // reader.readAsDataURL(file.file)
@@ -175,6 +231,7 @@ class FileDrop extends Component {
     const { hover, target } = this.state
     const className = cx(styles.container, hover && styles.hover, target && styles.target)
     const childStyle = target ? { display: 'none' } : {}
+
     return (
       <div
         // className={styles.container}
