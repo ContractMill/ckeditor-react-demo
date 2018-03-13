@@ -9,7 +9,8 @@ debug.enabled = true
 async function fixGoogleHTML (html) {
   console.log('fixGoogleHTML', html)
   let result = await posthtml().use(posthtmlInlineCss()).process(html)
-  let resultHtml = posthtmlRender(result.tree[0].content[1].content, result.tree.options)
+  let resultHtml = posthtmlRender(result.tree[0].content, result.tree.options)
+  console.log(resultHtml)
   return resultHtml
 }
 
@@ -54,7 +55,7 @@ export default async function (html) {
     html = pretty(html)
     html = html.replace(/"/g, '\'').replace(/&quot;/g, '"')
     html = html.replace(/font-weight:[\w ]*?;?/g, '')
-    html = html.replace(/<style(.|\n)*?<\/style>/, '')
+    // html = html.replace(/<style(.|\n)*?<\/style>/, '')
     // console.log(html)
     return html
   } catch (e) {
