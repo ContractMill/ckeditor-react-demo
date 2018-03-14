@@ -6,7 +6,6 @@ import PropTypes from 'prop-types'
 import request from 'request-promise-native'
 // import $ from 'jquery'
 
-// const mammoth = require('mammoth/mammoth.browser.js')
 
 import htmlFixer from './helper'
 
@@ -205,7 +204,7 @@ class FileDrop extends Component {
           console.log(options)
           request.post(options).then(async html => {
             console.log('->', html)
-            console.log(htmlFixer)
+            // console.log(htmlFixer)
             let fixedHtml = await htmlFixer(html)
             console.log('-->', fixedHtml)
             file.content = fixedHtml
