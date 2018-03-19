@@ -6,6 +6,9 @@ import { Button, Grid, Row, Col } from 'react-bootstrap'
 import CKeditorInline from './CKEditorInline'
 import $ from 'jquery'
 import examples from './exapmples'
+import Debug from 'debug'
+const debug = Debug('editor')
+debug.enabled = true
 
 const editorBlock = css`
   margin-right: auto;
@@ -53,7 +56,7 @@ function sendDocumentAndGetLink (document) {
       form: document
     })
   } catch (err) {
-    console.error('->', err)
+    debug(err)
   }
 }
 
@@ -83,6 +86,15 @@ export default class Editor extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
+    if (nextProps.content) {
+      debug(nextProps)
+      this.setState({
+        body: nextProps.content.body,
+        header: nextProps.content.header,
+        footer: nextProps.content.footer
+      })
+      this.setEditorsContent(nextProps.content)
+    }
     if (nextProps.file) {
       this.setState({
         file: nextProps.file,
@@ -122,7 +134,7 @@ export default class Editor extends React.Component {
   }
 
   onCreateEditor (section, evt) {
-    console.log('CREATE', section)
+    debug('CREATE', section)
     this.editor[section] = evt.editor
   }
 

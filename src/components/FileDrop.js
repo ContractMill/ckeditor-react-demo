@@ -190,28 +190,25 @@ class FileDrop extends Component {
   handleFile (file) {
     var reader = new FileReader()
 
-    reader.onload = (e) => {
-      console.log(e)
+    reader.onload = async (e) => {
       const arrayBuffer = e.target.result
-      console.log(arrayBuffer)
-
       try {
-        docxToHtmlConver(arrayBuffer, file).then(link => {
-          const options = {
-            url: 'https://zmeu213.unit.run/1-19?key=jA2zefFhS0q30Lc3YyhCaP46o0vACB3W',
-            form: {
-              link: link
-            }
+        let links = await docxToHtmlConver(arrayBuffer, file)
+        const options = {
+          url: 'https://zmeu213.unit.run/1-19?key=jA2zefFhS0q30Lc3YyhCaP46o0vACB3W',
+          form: {
+            link: links
           }
-          console.log(options)
-          request.post(options).then(async html => {
-            console.log('->', html)
-            let fixedHtml = await htmlFixer(html)
-            console.log('-->', fixedHtml)
-            file.content = fixedHtml
-            this.props.onFile && this.props.onFile(file)
-          })
-        })
+        }
+        console.log(options)
+        let content = JSON.parse(await request.post(options))
+        console.log('prefix', content)
+        content.body = await htmlFixer(content.body) || ''
+        content.footer = await htmlFixer(content.footer) || ''
+        content.header = await htmlFixer(content.header) || ''
+        console.log('afterfix', content)
+        this.props.handleContent(content)
+        // this.props.onFile && this.props.onFile(file)
       } catch (err) {
         console.error(err)
       }
