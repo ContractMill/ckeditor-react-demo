@@ -88,7 +88,7 @@ export default class Editor extends React.Component {
         file: nextProps.file,
         content: nextProps.file.content
       })
-      this.editor.setData(nextProps.file.content)
+      this.editor['body'].setData(nextProps.file.content)
     }
     if (typeof nextProps.exampleNumber === 'number') {
       this.setState(examples[nextProps.exampleNumber])
