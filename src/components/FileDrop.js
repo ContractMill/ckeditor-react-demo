@@ -6,8 +6,11 @@ import PropTypes from 'prop-types'
 import request from 'request-promise-native'
 
 import SideMenu from './SideMenu'
+import {htmlFixer, splitColontituls} from './helper'
 
-import htmlFixer from './helper'
+import Debug from 'debug'
+const debug = Debug('FileDrop')
+debug.enabled = true
 
 const styles = css`
   .container {
@@ -76,9 +79,9 @@ async function docxToHtmlConver (arrayBuffer, file) {
     followAllRedirects: true,
     form: formData
   }
-  console.log(params)
+  debug(params)
   let result = await request.post(params)
-  console.log('Result:', result)
+  debug('Result:', result)
   return result
 }
 
@@ -162,7 +165,7 @@ class FileDrop extends Component {
     e.preventDefault()
     e.stopPropagation()
 
-    console.log('handleDragEnter', e)
+    debug('handleDragEnter', e)
     if (!this.state.active) {
       this.setState({
         // hover: true
@@ -171,7 +174,7 @@ class FileDrop extends Component {
   }
 
   handleDragLeave (e) {
-    console.log('handleDragLeave', e)
+    debug('handleDragLeave', e)
     this.setState({
       // hover: false,
       // target: false
@@ -180,7 +183,7 @@ class FileDrop extends Component {
 
   handleDragOver (e) {
     e.preventDefault()
-    console.log('handleDragOver', e)
+    debug('handleDragOver', e)
     this.setState({
       // hover: false,
       // target: false
@@ -200,13 +203,13 @@ class FileDrop extends Component {
             link: links
           }
         }
-        console.log(options)
-        let content = JSON.parse(await request.post(options))
-        console.log('prefix', content)
-        content.body = await htmlFixer(content.body) || ''
-        content.footer = await htmlFixer(content.footer) || ''
-        content.header = await htmlFixer(content.header) || ''
-        console.log('afterfix', content)
+        debug(options)
+        let html = await request.post(options)
+        debug('prefix', html)
+        let fixedHtml = await htmlFixer(html)
+        debug(fixedHtml)
+        let content = splitColontituls(fixedHtml)
+        debug('afterfix', content)
         this.props.handleContent(content)
         // this.props.onFile && this.props.onFile(file)
       } catch (err) {

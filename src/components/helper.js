@@ -4,7 +4,6 @@ const posthtmlRender = require('./posthtml-render')
 // const Jsdom = require('jsdom').jsdom // wtf, npm run deploy failed on it
 const pretty = require('pretty')
 const debug = require('debug')('helper')
-const fs = require('fs')
 debug.enabled = true
 
 async function fixGoogleHTML (html) {
@@ -92,7 +91,7 @@ function wrapLineheights ($, jq) {
   }
 }
 
-async function doStuff (html) {
+async function htmlFixer (html) {
   try {
     html = await fixGoogleHTML(html)
     html = html.replace(/font-family:.?"\n?\W*?([\w|\s]*?)\W*?"/g, (match, fontName) => `font-family:‖${fontName}‖`)
@@ -111,9 +110,24 @@ async function doStuff (html) {
   }
 }
 
-export default doStuff
+function splitColontituls (googleHtml) {
+  debug(googleHtml)
+  const $ = require('jquery')
+  let html = $(googleHtml)
+  let content = {
+    body: '',
+    header: '',
+    footer: ''
+  }
+  let divs = html.find('div')
+  if (divs.length > 2) throw new Error('Wrong google html pattern!')
+  if (divs.length === 2) {
+    content.header = divs[0].innerHTML
+    content.footer = divs[1].innerHTML
+    divs.remove()
+  }
+  content.body = html.html()
+  return content
+}
 
-// let html = fs.readFileSync('raw.html').toLocaleString()
-
-// debug('\n\n\n\n\n')
-// doStuff(html).then(e => console.log(e))
+export {htmlFixer, splitColontituls}

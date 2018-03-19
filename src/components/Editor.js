@@ -87,13 +87,11 @@ export default class Editor extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.content) {
-      debug(nextProps)
-      this.setState({
-        body: nextProps.content.body,
-        header: nextProps.content.header,
-        footer: nextProps.content.footer
-      })
+      debug(nextProps.content)
+      this.updateContent(nextProps.content)
       this.setEditorsContent(nextProps.content)
+      debug(this)
+      return
     }
     if (nextProps.file) {
       this.setState({
@@ -109,6 +107,7 @@ export default class Editor extends React.Component {
   }
 
   setEditorsContent (content) {
+    debug('call setEditorsContet', content)
     const editors = ['header', 'body', 'footer']
     editors.map(type => {
       if (content[type] !== undefined) {
@@ -134,7 +133,7 @@ export default class Editor extends React.Component {
   }
 
   onCreateEditor (section, evt) {
-    debug('CREATE', section)
+    debug('CREATE ' + section)
     this.editor[section] = evt.editor
   }
 
