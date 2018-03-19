@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
-const loadScript = require('load-script')
+import loadScript from 'load-script'
 
-var defaultScriptUrl = 'ckeditor/ckeditor.js'
+const defaultScriptUrl = 'ckeditor/ckeditor.js'
 
 class CKEditorInline extends React.Component {
   constructor (props) {

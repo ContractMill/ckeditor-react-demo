@@ -67,44 +67,63 @@ export default class Editor extends React.Component {
     this.onButtonClick = this.onButtonClick.bind(this)
     this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this)
     this.onCreateEditor = this.onCreateEditor.bind(this)
-    this.editor = undefined // ?
-    this.state = examples.apollo // body footer header
+    this.setEditorsContent = this.setEditorsContent.bind(this)
+    this.editor = {} // ?
+    this.exampleNumber = this.props.exampleNumber
+    this.state = examples[0] // body footer header
     window.$ = $
   }
 
   updateContent (newContent) {
     this.setState({
-      content: newContent
+      body: newContent.body,
+      header: newContent.header,
+      footer: newContent.footer
     })
   }
 
   componentWillReceiveProps (nextProps) {
-    this.setState({
-      file: nextProps.file,
-      content: nextProps.file.content
+    if (nextProps.file) {
+      this.setState({
+        file: nextProps.file,
+        content: nextProps.file.content
+      })
+      this.editor.setData(nextProps.file.content)
+    }
+    if (typeof nextProps.exampleNumber === 'number') {
+      this.setState(examples[nextProps.exampleNumber])
+      this.setEditorsContent(examples[nextProps.exampleNumber])
+    }
+  }
+
+  setEditorsContent (content) {
+    const editors = ['header', 'body', 'footer']
+    editors.map(type => {
+      if (content[type] !== undefined) {
+        this.editor[type].setData(content[type])
+      }
     })
-    this.editor.setData(nextProps.file.content)
   }
 
   async onButtonClick () {
-    console.log(this.state.body)
-    let result = htmlOptimization(this.state.body)
-    console.log(result)
-    result = await sendDocumentAndGetLink({
-      document: result,
-      header: this.state.header,
-      footer: this.state.footer
+    let result = await sendDocumentAndGetLink({
+      document: htmlOptimization(this.state.body),
+      header: htmlOptimization(this.state.header),
+      footer: htmlOptimization(this.state.footer)
     })
     window.location.href = result
   }
 
   onChange (evt) {
-    const newContent = evt.editor.getData()
-    this.updateContent(newContent)
+    const body = evt.editor.getData()
+    this.setState({
+      body: body
+    })
   }
 
-  onCreateEditor (evt) {
-    this.editor = evt.editor
+  onCreateEditor (section, evt) {
+    console.log('CREATE', section)
+    this.editor[section] = evt.editor
   }
 
   onChangeHeader (evt) {
@@ -132,9 +151,12 @@ export default class Editor extends React.Component {
       <Grid className={editorBlock}>
         <Row>
           <Col mdOffset={2} md={8} sm={12}>
-          <CKeditorInline // header
+            <CKeditorInline // header
               activeClass={headerEditor}
-              events={{ 'change': this.onChangeFooter }}
+              events={{ 
+                'change': this.onChangeFooter,
+                'configLoaded': this.onCreateEditor.bind(this, 'header')
+              }}
               scriptUrl={'ckeditor/ckeditor.js'}
               config={{
                 docType: '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">',
@@ -157,12 +179,12 @@ export default class Editor extends React.Component {
               content={this.state.body}
               events={{
                 'change': this.onChange,
-                'configLoaded': this.onCreateEditor
+                'configLoaded': this.onCreateEditor.bind(this, 'body')
               }}
               config={{
-                height: 500,
+                height: 450,
                 autoGrow_minHeight: 350,
-                autoGrow_maxHeight: 500,
+                autoGrow_maxHeight: 450,
                 autoGrow_bottomSpace: 50,
                 extraPlugins: 'autogrow,lineheight,enterkey,tabletoolstoolbar,autocorrect,colordialog,tableresize,stylesheetparser,googledocs,toc,docprops',
                 enterMode: 2, // CKEDITOR.ENTER_BR,
@@ -177,7 +199,10 @@ export default class Editor extends React.Component {
           <Col mdOffset={2} md={8} sm={12}>
             <CKeditorInline // footer
               activeClass={footerEditor}
-              events={{ 'change': this.onChangeFooter }}
+              events={{
+                'change': this.onChangeFooter,
+                'configLoaded': this.onCreateEditor.bind(this, 'footer')
+              }}
               scriptUrl={'ckeditor/ckeditor.js'}
               config={{
                 docType: '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">',

@@ -4,8 +4,8 @@ import React, { Component } from 'react'
 import { css, cx } from 'emotion'
 import PropTypes from 'prop-types'
 import request from 'request-promise-native'
-// import $ from 'jquery'
 
+import SideMenu from './SideMenu'
 
 import htmlFixer from './helper'
 
@@ -55,6 +55,12 @@ const styles = css`
       display: block;
     }
   }
+`
+
+const menu = css`
+  height: 100%;
+  width: 0;
+  position: absolute;
 `
 
 async function docxToHtmlConver (arrayBuffer, file) {
@@ -182,16 +188,12 @@ class FileDrop extends Component {
   }
 
   handleFile (file) {
-    console.log(file)
     var reader = new FileReader()
 
     reader.onload = (e) => {
       console.log(e)
       const arrayBuffer = e.target.result
       console.log(arrayBuffer)
-      // file.content = reader.result
-      // console.log('--->', arrayBuffer)
-      // this.props.onFile && this.props.onFile(file)
 
       try {
         docxToHtmlConver(arrayBuffer, file).then(link => {
@@ -204,7 +206,6 @@ class FileDrop extends Component {
           console.log(options)
           request.post(options).then(async html => {
             console.log('->', html)
-            // console.log(htmlFixer)
             let fixedHtml = await htmlFixer(html)
             console.log('-->', fixedHtml)
             file.content = fixedHtml
@@ -214,16 +215,8 @@ class FileDrop extends Component {
       } catch (err) {
         console.error(err)
       }
-
-      // mammoth.convertToHtml({ arrayBuffer })
-      //   .then(result => {
-      //     console.log('=====>>>', result)
-      //     file.content = result.value
-      //     this.props.onFile && this.props.onFile(file)
-      //   })
     }
 
-    // reader.readAsDataURL(file.file)
     reader.readAsArrayBuffer(file.file)
   }
 
@@ -234,21 +227,20 @@ class FileDrop extends Component {
 
     return (
       <div
-        // className={styles.container}
         onDragEnter={this.handleDragEnter}
         onDragOver={this.handleDragOver}
         onDragLeave={this.handleDragLeave}
         onDrop={this.handleDrop}
         className={className}
-        >
+      >
         <input
-          // ref='file'
           className={styles.file}
           name='upload'
           type='file'
           ref='upload'
           onChange={this.handleChange}
         />
+        <SideMenu className={menu} selectExample={this.props.selectExample} />
         <div style={childStyle}>{this.props.children}</div>
       </div>
     )
