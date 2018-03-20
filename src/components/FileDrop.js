@@ -6,7 +6,7 @@ import PropTypes from 'prop-types'
 import request from 'request-promise-native'
 
 import SideMenu from './SideMenu'
-import {htmlFixer, splitColontituls} from './helper'
+import {htmlFixer, splitColontituls, insertPageBreaks} from './helper'
 
 import Debug from 'debug'
 const debug = Debug('FileDrop')
@@ -207,8 +207,8 @@ class FileDrop extends Component {
         let html = await request.post(options)
         debug('prefix', html)
         let fixedHtml = await htmlFixer(html)
-        debug(fixedHtml)
         let content = splitColontituls(fixedHtml)
+        content.body = insertPageBreaks(content.body)
         debug('afterfix', content)
         this.props.handleContent(content)
         // this.props.onFile && this.props.onFile(file)

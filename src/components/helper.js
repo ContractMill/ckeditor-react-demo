@@ -16,7 +16,7 @@ async function fixGoogleHTML (html) {
 
 function wrapWithStrong (html) {
   // const window = new Jsdom(html).defaultView
-  const $ = require('jquery')//(window)
+  const $ = require('jquery')// (window)
   let jq = $(`<div>${html}</div>`)
   let strongSpans = jq.find('span').filter(function () {
     return $(this).css('font-weight') === '700'
@@ -24,6 +24,7 @@ function wrapWithStrong (html) {
   for (let span of strongSpans) {
     $(span).wrapInner('<strong>')
   }
+  insertPageBreaks($, jq)
   makeTitles($, jq)
   wrapLineheights($, jq)
   applyStylesToLists($, jq)
@@ -40,6 +41,27 @@ function removeClasses ($, jq) {
   for (let ul of uls) {
     $(ul).attr('style', '')
   }
+}
+
+function insertPageBreaks (content) {
+  const $ = require('jquery')
+  let jq = $(`<div>${content}</div>`)
+  let dataCounter = 0
+  $.map(jq.find('hr'), el => {
+    dataCounter++
+    let pageBreak = $('<div/>', {
+      'aria-label': 'Page Break',
+      'class': 'cke_pagebreak',
+      'contenteditable': 'false',
+      'data-cke-display-name': 'pagebreak',
+      'style': 'page-break-after: always',
+      'title': 'Page Break',
+      'data-cke-pagebreak': dataCounter + ''
+    })
+    debug(pageBreak)
+    el.replaceWith(pageBreak[0])
+  })
+  return jq[0].outerHTML
 }
 
 function applyStylesToLists ($, jq) {
@@ -130,4 +152,4 @@ function splitColontituls (googleHtml) {
   return content
 }
 
-export {htmlFixer, splitColontituls}
+export {htmlFixer, splitColontituls, insertPageBreaks}
