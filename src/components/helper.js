@@ -4,7 +4,6 @@ const posthtmlRender = require('./posthtml-render')
 // const Jsdom = require('jsdom').jsdom // wtf, npm run deploy failed on it
 const pretty = require('pretty')
 const debug = require('debug')('helper')
-const toPx = require('unit-to-px')
 const _ = require('underscore')
 debug.enabled = true
 
@@ -43,7 +42,6 @@ function wrapSpanStyles ($, jq) {
     let styles = getStyleObject(span)
     styles = _.omit(styles, 'font-weight', 'text-decoration-skip-ink', '-webkit-text-decoration-skip')
     span.removeAttr('class style')
-    debug(span, styles)
     _.mapObject(styles, (value, key) => {
       if (key === 'font-family') {
         value = value + ',Helvetica,sans-serif'

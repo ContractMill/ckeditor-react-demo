@@ -39,7 +39,7 @@ const buttonStyle = css`
 function htmlOptimization (html) {
   html = html.replace(/&quot;/g, '')
   let jq = $(`<div>${html}</div>`)
-  jq.find('div[style="page-break-after:always"]').replaceWith('<div>[pageBreak]</div>')
+  jq.find('div[style="page-break-after: always"]').replaceWith('<div>[pageBreak]</div>')
   $('<br>').appendTo(jq.find('span.lineHeightSpan'))
   let result = jq[0].outerHTML
   while (/<\/span><br><\/span>/.test(result)) {
@@ -164,7 +164,7 @@ export default class Editor extends React.Component {
           <Col mdOffset={2} md={8} sm={12}>
             <CKeditorInline // header
               activeClass={headerEditor}
-              events={{ 
+              events={{
                 'change': this.onChangeFooter,
                 'configLoaded': this.onCreateEditor.bind(this, 'header')
               }}
