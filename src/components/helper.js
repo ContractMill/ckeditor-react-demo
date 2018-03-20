@@ -4,6 +4,8 @@ const posthtmlRender = require('./posthtml-render')
 // const Jsdom = require('jsdom').jsdom // wtf, npm run deploy failed on it
 const pretty = require('pretty')
 const debug = require('debug')('helper')
+const toPx = require('unit-to-px')
+const _ = require('underscore')
 debug.enabled = true
 
 async function fixGoogleHTML (html) {
@@ -12,6 +14,70 @@ async function fixGoogleHTML (html) {
   let resultHtml = posthtmlRender(result.tree[0].content, result.tree.options)
   // console.log(resultHtml)
   return resultHtml
+}
+
+function wrapSpanStyles ($, jq) {
+  const getStyleObject = element => {
+    return JSON.parse('{' +
+    element.attr('style')
+      .replace(/;/g, ',')
+      .replace(/ ?(.*?): ?(.*?)(,|$)/g, (match, p1, p2) => `"${p1}":"${p2.replace(/"/g, '')}",`)
+      .slice(0, -1) +
+    '}')
+  }
+  const whitelistStyles = selector => {
+    jq.find(selector).each(function () {
+      let el = $(this)
+      let styles = getStyleObject(el)
+      styles = _.pick(styles, 'text-align', 'line-height')
+      let styleString = ''
+      _.mapObject(styles, (val, key) => { styleString += `${key}:${val};` })
+      el.attr('style', styleString)
+      el.removeAttr('class')
+    })
+  }
+  whitelistStyles('p')
+  whitelistStyles('li')
+  jq.find('span').each(function (index) {
+    let span = $(this)
+    let styles = getStyleObject(span)
+    styles = _.omit(styles, 'font-weight', 'text-decoration-skip-ink', '-webkit-text-decoration-skip')
+    span.removeAttr('class style')
+    debug(span, styles)
+    _.mapObject(styles, (value, key) => {
+      if (key === 'font-family') {
+        value = value + ',Helvetica,sans-serif'
+      }
+      switch (key) {
+        case 'font-style': {
+          switch (value) {
+            case 'italic': return span.wrapInner('<em></em>')
+          }
+          break
+        }
+        case 'text-decoration': {
+          switch (value) {
+            case 'line-through': return span.wrapInner('<s></s>')
+            case 'underline': return span.wrapInner('<u></u>')
+          }
+          break
+        }
+        case 'vertical-align': {
+          switch (value) {
+            case 'baseline': return
+            case 'sub': return span.wrapInner('<sub></sub>')
+            case 'super': return span.wrapInner('<sup></sup>')
+          }
+        }
+      }
+      span.wrapInner(`<span style='${key}:${value};'></span>`)
+    })
+    span.outerHTML = span.innerHTML
+  })
+
+  // spans.each(function () {
+  //   debug($(this).css())
+  // })
 }
 
 function wrapWithStrong (html) {
@@ -29,6 +95,7 @@ function wrapWithStrong (html) {
   wrapLineheights($, jq)
   applyStylesToLists($, jq)
   removeClasses($, jq)
+  wrapSpanStyles($, jq)
   return jq[0].outerHTML
 }
 
@@ -58,7 +125,6 @@ function insertPageBreaks (content) {
       'title': 'Page Break',
       'data-cke-pagebreak': dataCounter + ''
     })
-    debug(pageBreak)
     el.replaceWith(pageBreak[0])
   })
   return jq[0].outerHTML

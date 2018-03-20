@@ -201,6 +201,7 @@ export default class Editor extends React.Component {
                 enterMode: 2, // CKEDITOR.ENTER_BR,
                 shiftEnterMode: 1, // CKEDITOR.ENTER_P,
                 line_height: '1.0;1.5;2.0;2.5;3.0',
+                fontSize_sizes: '5/5pt;5.5/5.5pt;6.5/6.5pt;7.5/7.5pt;8/8pt;9/9pt;10/10pt;10.5/10.5pt;11/11pt;12/12pt;14/14pt;16/16pt;18/18pt;20/20pt;22/22pt;24/24pt;26/26pt;28/28pt;36/36pt;48/48pt;72/72pt',
                 fullPage: true
               }}
             />
