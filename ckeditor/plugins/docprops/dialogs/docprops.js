@@ -79,12 +79,11 @@ CKEDITOR.dialog.add('docProps', function (editor) {
     }
   }
 
-  // Rewrite it to produce padding instead
   function commitMargin (name) {
     return function (doc, html, head, body) {
-      body.removeAttribute('padding' + name)
+      body.removeAttribute('margin' + name)
       var val = this.getValue()
-      if (val !== '') { body.setStyle('padding-' + name, CKEDITOR.tools.cssLength(val)) } else { body.removeStyle('padding-' + name) }
+      if (val !== '') { body.setStyle('margin-' + name, CKEDITOR.tools.cssLength(val)) } else { body.removeStyle('margin-' + name) }
     }
   }
 
