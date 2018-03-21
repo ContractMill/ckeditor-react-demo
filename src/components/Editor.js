@@ -158,14 +158,16 @@ export default class Editor extends React.Component {
   }
 
   render () {
+    const noWarningMessagesRelatedToContentEditable = true
     return (
       <Grid className={editorBlock}>
         <Row>
           <Col mdOffset={2} md={8} sm={12}>
             <CKeditorInline // header
               activeClass={headerEditor}
+              suppressContentEditableWarning={noWarningMessagesRelatedToContentEditable}
               events={{
-                'change': this.onChangeFooter,
+                'change': this.onChangeHeader,
                 'configLoaded': this.onCreateEditor.bind(this, 'header')
               }}
               scriptUrl={'ckeditor/ckeditor.js'}
@@ -187,7 +189,9 @@ export default class Editor extends React.Component {
           <Col mdOffset={2} md={8} sm={12}>
             <CKEditor
               scriptUrl={'ckeditor/ckeditor.js'}
+              suppressContentEditableWarning={noWarningMessagesRelatedToContentEditable}
               content={this.state.body}
+              tabindex={'-1'}
               events={{
                 'change': this.onChange,
                 'configLoaded': this.onCreateEditor.bind(this, 'body')
@@ -197,7 +201,9 @@ export default class Editor extends React.Component {
                 autoGrow_minHeight: 350,
                 autoGrow_maxHeight: 450,
                 autoGrow_bottomSpace: 50,
-                extraPlugins: 'autogrow,lineheight,enterkey,tabletoolstoolbar,autocorrect,colordialog,tableresize,stylesheetparser,googledocs,toc,docprops',
+                enableTabKeyTools: false,
+                startupFocus: true,
+                extraPlugins: 'autogrow,lineheight,enterkey,tabletoolstoolbar,autocorrect,colordialog,tableresize,stylesheetparser,googledocs,toc,docprops,indent,indentblock,indentlist',
                 enterMode: 2, // CKEDITOR.ENTER_BR,
                 shiftEnterMode: 1, // CKEDITOR.ENTER_P,
                 line_height: '1.0;1.5;2.0;2.5;3.0',
@@ -211,6 +217,7 @@ export default class Editor extends React.Component {
           <Col mdOffset={2} md={8} sm={12}>
             <CKeditorInline // footer
               activeClass={footerEditor}
+              suppressContentEditableWarning={noWarningMessagesRelatedToContentEditable}
               events={{
                 'change': this.onChangeFooter,
                 'configLoaded': this.onCreateEditor.bind(this, 'footer')
@@ -219,7 +226,8 @@ export default class Editor extends React.Component {
               config={{
                 docType: '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">',
                 defaultLanguage: 'ru',
-                height: 300
+                height: 300,
+                fullPage: true
               }}
             >
               <p style={{'textAlign': 'right'}} >
