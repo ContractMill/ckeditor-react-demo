@@ -41,15 +41,11 @@ function htmlOptimization (html) {
   html = html.replace(/&quot;/g, '')
   let bodyStyle = ''
   let match = html.match(/<body.*?style=\\?"(.*?)\\?"/)
-  if (match) {
-    bodyStyle = match[1].replace(/padding-(top|left|right|bottom): ?(\d+)px;?/g, (m, p1, p2) => {
-      return `padding-${p1}: ${Math.round(p2 * 0.75)}pt;`
-    })
-  }
-  let jq = $(`<div style="${bodyStyle ? bodyStyle[1] : ''}">${html}</div>`)
+  if (match) bodyStyle = match[1]
+  let jq = $(`<div>${html}</div>`)
   jq.find('div[style="page-break-after: always"]').replaceWith('<div>[pageBreak]</div>')
   $('<br>').appendTo(jq.find('span.lineHeightSpan'))
-  let result = jq[0].outerHTML
+  let result = `<body style="${bodyStyle}">${jq[0].outerHTML}</body>`
   while (/<\/span><br><\/span>/.test(result)) {
     result = result.replace('</span><br></span>', '</span></span>')
   }
@@ -126,7 +122,7 @@ export default class Editor extends React.Component {
 
   async onButtonClick () {
     let result = await sendDocumentAndGetLink({
-      document: htmlOptimization(this.state.body),
+      document: htmlOptimization(this.editor.body.getData()),
       header: htmlOptimization(this.state.header),
       footer: htmlOptimization(this.state.footer)
     })
