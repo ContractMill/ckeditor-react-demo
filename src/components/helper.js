@@ -17,8 +17,10 @@ async function fixGoogleHTML (html) {
 
 function wrapSpanStyles ($, jq) {
   const getStyleObject = element => {
+    let style = element.attr('style')
+    if (!style) return {}
     return JSON.parse('{' +
-    element.attr('style')
+    style
       .replace(/;/g, ',')
       .replace(/ ?(.*?): ?(.*?)(,|$)/g, (match, p1, p2) => `"${p1}":"${p2.replace(/"/g, '')}",`)
       .slice(0, -1) +

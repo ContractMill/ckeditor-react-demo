@@ -7,8 +7,10 @@ import CKeditorInline from './CKEditorInline'
 import $ from 'jquery'
 import examples from './exapmples'
 import Debug from 'debug'
+
 const debug = Debug('editor')
 debug.enabled = true
+
 
 const editorBlock = css`
   margin-right: auto;
@@ -38,7 +40,12 @@ const buttonStyle = css`
 
 function htmlOptimization (html) {
   html = html.replace(/&quot;/g, '')
-  let jq = $(`<div>${html}</div>`)
+  let bodyStyle = ''
+  let match = html.match(/<body.*?style=\\?"(.*?)\\?"/)
+  if (match) bodyStyle = match[1].replace(/padding-(top|left|right|bottom): ?(\d+)px;?/g, (m, p1, p2) => {
+    return `padding-${p1}: ${Math.round(p2 * 0.75)}pt;`
+  })
+  let jq = $(`<div style="${bodyStyle ? bodyStyle[1] : ''}">${html}</div>`)
   jq.find('div[style="page-break-after: always"]').replaceWith('<div>[pageBreak]</div>')
   $('<br>').appendTo(jq.find('span.lineHeightSpan'))
   let result = jq[0].outerHTML
@@ -134,6 +141,7 @@ export default class Editor extends React.Component {
 
   onCreateEditor (section, evt) {
     debug('CREATE ' + section)
+    debug(evt.editor)
     this.editor[section] = evt.editor
   }
 
