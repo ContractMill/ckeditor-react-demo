@@ -43,8 +43,10 @@ function wrapSpanStyles ($, jq) {
     let span = $(this)
     let styles = getStyleObject(span)
     styles = _.omit(styles, 'font-weight', 'text-decoration-skip-ink', '-webkit-text-decoration-skip')
-    span.removeAttr('class style')
+    span.removeAttr('class style color')
+    let style = ''
     _.mapObject(styles, (value, key) => {
+      // debug(style, key, '=', value)
       if (key === 'font-family') {
         value = value + ',Helvetica,sans-serif'
       }
@@ -70,9 +72,14 @@ function wrapSpanStyles ($, jq) {
           }
         }
       }
-      span.wrapInner(`<span style='${key}:${value};'></span>`)
+      style += `${key}:${value}; `
+      // span.wrapInner(`<span style='${key}:${value};'></span>`)
     })
-    span.outerHTML = span.innerHTML
+    // style += `'`
+    // debug('--->', style)
+    // span.wrapInner(`<span style=${style}></span>`)
+    // span.outerHTML = span.innerHTML
+    span.attr('style', style)
   })
 
   // spans.each(function () {

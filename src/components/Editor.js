@@ -177,6 +177,7 @@ export default class Editor extends React.Component {
               }}
               scriptUrl={'ckeditor/ckeditor.js'}
               config={{
+                tabIndex: -1,
                 docType: '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">',
                 defaultLanguage: 'ru',
                 height: 150
@@ -196,13 +197,14 @@ export default class Editor extends React.Component {
               scriptUrl={'ckeditor/ckeditor.js'}
               suppressContentEditableWarning={noWarningMessagesRelatedToContentEditable}
               content={this.state.body}
-              tabindex={'-1'}
               events={{
                 'change': this.onChange,
                 'configLoaded': this.onCreateEditor.bind(this, 'body')
               }}
               config={{
+                tabIndex: -1,
                 height: 450,
+                bodyClass: 'document-editor',
                 autoGrow_minHeight: 350,
                 autoGrow_maxHeight: 450,
                 autoGrow_bottomSpace: 50,
@@ -229,6 +231,7 @@ export default class Editor extends React.Component {
               }}
               scriptUrl={'ckeditor/ckeditor.js'}
               config={{
+                tabIndex: -1,
                 docType: '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">',
                 defaultLanguage: 'ru',
                 height: 300,
