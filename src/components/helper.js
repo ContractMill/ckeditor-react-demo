@@ -30,15 +30,28 @@ function wrapSpanStyles ($, jq) {
     jq.find(selector).each(function () {
       let el = $(this)
       let styles = getStyleObject(el)
-      styles = _.pick(styles, 'text-align', 'line-height')
-      let styleString = ''
-      _.mapObject(styles, (val, key) => { styleString += `${key}:${val};` })
-      el.attr('style', styleString)
-      el.removeAttr('class')
+      let lineHeight = styles['line-height']
+      let textAlign = styles['text-align']
+      let whiteList = _.pick(styles, 'text-align', 'height')
+      el.removeAttr('class style')
+      let style = ''
+      _.mapObject(whiteList, (val, key) => {
+        style += key + ':' + val + ';'
+      })
+      if (textAlign) {
+        el.attr('style', style)
+      }
+      if (lineHeight) {
+        if (!/\d+\.\d/.test(lineHeight)) {
+          lineHeight += '.0'
+        }
+        if (/\d+\.\d+/.test(lineHeight)) {
+          lineHeight = lineHeight.replace(/\.\d+/, '.0') // ??S
+        }
+        el.wrapInner(`<span class='lineHeightSpan' style='line-height:${lineHeight};'></span>`)
+      }
     })
   }
-  whitelistStyles('p')
-  whitelistStyles('li')
   jq.find('span').each(function (index) {
     let span = $(this)
     let styles = getStyleObject(span)
@@ -70,6 +83,16 @@ function wrapSpanStyles ($, jq) {
             case 'sub': return span.wrapInner('<sub></sub>')
             case 'super': return span.wrapInner('<sup></sup>')
           }
+          break
+        }
+      }
+      if (key === 'line-height') {
+        span.addClass('lineHeightSpan')
+        if (!/\d+\.\d/.test(value)) {
+          value += '.0'
+        }
+        if (/\d+\.\d+/.test(value)) {
+          value = value.replace(/\.\d+/, '.0') // ??S
         }
       }
       style += `${key}:${value}; `
@@ -81,6 +104,8 @@ function wrapSpanStyles ($, jq) {
     // span.outerHTML = span.innerHTML
     span.attr('style', style)
   })
+  whitelistStyles('p')
+  whitelistStyles('li')
 
   // spans.each(function () {
   //   debug($(this).css())
@@ -107,7 +132,7 @@ function wrapWithStrong (html) {
 }
 
 function removeClasses ($, jq) {
-  let els = jq.find('p, span')
+  let els = jq.find('p, span, td, tr, table')
   for (let el of els) {
     $(el).removeClass()
   }
