@@ -59,7 +59,6 @@ function wrapSpanStyles ($, jq) {
     span.removeAttr('class style color')
     let style = ''
     _.mapObject(styles, (value, key) => {
-      // debug(style, key, '=', value)
       if (key === 'font-family') {
         value = value + ',Helvetica,sans-serif'
       }
@@ -95,24 +94,27 @@ function wrapSpanStyles ($, jq) {
           value = value.replace(/\.\d+/, '.0') // ??S
         }
       }
-      style += `${key}:${value}; `
-      // span.wrapInner(`<span style='${key}:${value};'></span>`)
+      style += `${key}:${value};`
     })
-    // style += `'`
-    // debug('--->', style)
-    // span.wrapInner(`<span style=${style}></span>`)
-    // span.outerHTML = span.innerHTML
     span.attr('style', style)
   })
   whitelistStyles('p')
   whitelistStyles('li')
-
-  // spans.each(function () {
-  //   debug($(this).css())
-  // })
 }
 
-function wrapWithStrong (html) {
+function squashTable ($, jq) { // funcition to replace table styles from tbody to tds
+  // get all tables
+  let tables = jq.find('table')
+  for (let table of tables) {
+    // next get all elements from those tables
+    let tds = $(table).find('td')
+    for (let td of tds) {
+      debug(td)
+    }
+  }
+}
+
+function wrapWithStrong (html) { // wraper and jquery initializer
   // const window = new Jsdom(html).defaultView
   const $ = require('jquery')// (window)
   let jq = $(`<div>${html}</div>`)
@@ -122,6 +124,7 @@ function wrapWithStrong (html) {
   for (let span of strongSpans) {
     $(span).wrapInner('<strong>')
   }
+  // set of functions on jquery to deal with html differencies
   insertPageBreaks($, jq)
   makeTitles($, jq)
   wrapLineheights($, jq)
